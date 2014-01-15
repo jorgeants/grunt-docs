@@ -1,6 +1,6 @@
 # Grunt
 
-Documentação do Grunt traduzida para pt-BR
+### Summary
 
 1. [Home](Home.md)
 2. Documentation
@@ -35,8 +35,3 @@ Documentação do Grunt traduzida para pt-BR
 7. Other
   * [Inside Tasks](Inside-Tasks.md)
   * [Exit Codes](Exit-Codes.md)
-
-
-## Contribuições
-
-Faça um [Pull Request](https://github.com/gruntbrasil/docs-grunt-plugins/pulls) para enviar traduções de documentações para o Grunt.
