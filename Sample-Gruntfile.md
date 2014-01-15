@@ -1,4 +1,4 @@
-Abaixo exploramos um exemplo do `Gruntfile`, que usará cinco plugins:
+Below we walk through a sample `Gruntfile` which uses five Grunt plugins:
 
 - [grunt-contrib-uglify](https://github.com/gruntjs/grunt-contrib-uglify)
 - [grunt-contrib-qunit](https://github.com/gruntjs/grunt-contrib-qunit)
@@ -6,27 +6,30 @@ Abaixo exploramos um exemplo do `Gruntfile`, que usará cinco plugins:
 - [grunt-contrib-jshint](https://github.com/gruntjs/grunt-contrib-jshint)
 - [grunt-contrib-watch](https://github.com/gruntjs/grunt-contrib-watch)
 
-O `Gruntfile` inteiro está no fim da página, mas se você ler tudo, vamos caminhar passo a passo.
+The entire `Gruntfile` is at the bottom of this page, but if you keep reading we'll walk through it a step at a time.
 
 
-Na primeira parte, temos a função "wrapper", que encapsula a configuração do Grunt.
+The first part is the "wrapper" function, which encapsulates your Grunt configuration.
 
 ```javascript
 module.exports = function(grunt) {
 }
 ```
-Dentro dessa função, vamos inicializar o objeto de configuração:
+
+Within that function we can initialize our configuration object:
 
 ```javascript
 grunt.initConfig({
 });
 ```
-Depois, podemos ler as configurações do projeto que estão arquivo `package.json`, através da propriedade `pkg`. Isto permite que referenciemos os valores das propriedades dentro do arquivo `package.json`, como veremos em breve.
+
+Next we can read in the project settings from the `package.json` file into the `pkg` property. This allows us to refer to the values of properties within our `package.json` file, as we'll see shortly.
 
 ```javascript
 pkg: grunt.file.readJSON('package.json')
 ```
-Isso nos deixa com esse código:
+
+This leaves us with this so far:
 
 ```javascript
 module.exports = function(grunt) {
@@ -35,32 +38,32 @@ module.exports = function(grunt) {
   });
 };
 ```
-Agora podemos definir a configuração para cada tarefa que temos. O objeto da configuração (`pkg`) age como uma propriedade na configuração do objeto, que recebe o nome da tarefa. Então a tarefa "concat" vai para a nossa configuração pela chave "concat". Abaixo está o objeto de configuração da tarefa "concat".
+
+Now we can define configuration for each of the tasks we have. The configuration object for a task lives as a property on the configuration object, that's named the same as the task. So the "concat" task goes in our config object under the "concat" key. Below is my configuration object for the "concat" task.
 
 ```javascript
 concat: {
   options: {
-    // define uma string para ser colocada entre cada arquivo na saída.
+    // define a string to put between each file in the concatenated output
     separator: ';'
   },
   dist: {
-    // os arquivos a serem concatenados
+    // the files to concatenate
     src: ['src/**/*.js'],
-    // o local para saída do arquivo JS resultante
+    // the location of the resulting JS file
     dest: 'dist/<%= pkg.name %>.js'
   }
 }
 ```
 
-Note como é referenciada a propriedade `name`  que está no arquivo JSON. Nós acessamos esta propriedade usando `pkg.name` como anteriormente definimos que a propriedade `pkg` seria o resultado do carregamento do arquivo JSON, que é interpretado para um objeto JavaScript.
-O Grunt tem um simples modelo de engine para a saída dos valores da propriedade do objeto da configuração. Aqui digo com a tarefa "concat" para concatenar (o mesmo que juntar) todos os arquivos existentes na pasta `src/` que terminam em `.js`.
+Note how I refer to the `name` property that's in the JSON file. We access this using `pkg.name` as earlier we defined the `pkg` property to be the result of loading the `package.json` file, which is then parsed to a JavaScript object. Grunt has simple template engine to output the values of properties in the configuration object. Here I tell the concat task to concatenate all files that exist within `src/` and end in `.js`.
 
-Agora vamos configurar a tarefa "uglify", que minifica nosso JavaScript:
+Now lets configure the uglify plugin, which minifies our JavaScript:
 
 ```javascript
 uglify: {
   options: {
-    // o banner é inserido no topo do arquivo de saída
+    // the banner is inserted at the top of the output
     banner: '/*! <%= pkg.name %> <%= grunt.template.today("dd-mm-yyyy") %> */\n'
   },
   dist: {
@@ -71,24 +74,25 @@ uglify: {
 }
 ```
 
-Isso diz a tarefa "uglify" para criar dentro da pasta `dist/`, que contém o resultado da minificação dos arquivos JS. Aqui uso `<%= concat.dist.dest %>`, que minificará o arquivo de saída da tarefa "concat" vista acima.
+This tells uglify to create a file within `dist/` that contains the result of minifying the JavaScript files. Here I use `<%= concat.dist.dest %>` so uglify will minify the file that the concat task produces.
 
-O plugin QUnit é realmente simples para configurar. Você só precisar dar o local dos arquivos em que serão feitos testes, que são os arquivos HTML que o QUnit lê.
+The QUnit plugin is really simple to set up. You just need to give it the location of the test runner files, which are the HTML files QUnit runs on.
+
 ```javascript
 qunit: {
   files: ['test/**/*.html']
 },
 ```
 
-O plugin JSHint também é bem simples de se configurar:
+The JSHint plugin is also very simple to configure:
 
 ```javascript
 jshint: {
-  // define os arquivos em que o plugin será executado
+  // define the files to lint
   files: ['gruntfile.js', 'src/**/*.js', 'test/**/*.js'],
-  // configura o JSHint (documentado em http://www.jshint.com/docs/)
+  // configure JSHint (documented at http://www.jshint.com/docs/)
   options: {
-  	// aqui você coloca mais opções, caso queira sobrescrever as opções padrões
+  	// more options here if you want to override JSHint defaults
     globals: {
       jQuery: true,
       console: true,
@@ -98,9 +102,9 @@ jshint: {
 }
 ```
 
-O JSHint simplesmente "pega" um array de arquivos e então um objeto com opções. Isso tudo está [documentado no site do JSHint](http://www.jshint.com/docs/). Se você está satisfeito coms os padrões do JSHint, não há necessidade de redefini-los no arquivo Gruntfile.
+JSHint simply takes an array of files and then an object of options. These are all [documented on the JSHint site](http://www.jshint.com/docs/). If you're happy with the JSHint defaults, there's no need to redefine them in the Gruntfile.
 
-Finalmente temos o plugin watch:
+Finally we have the watch plugin:
 
 ```javascript
 watch: {
@@ -109,9 +113,9 @@ watch: {
 }
 ```
 
-Isto pode ser executado com o comando `grunt watch`. Quando é detectado pelo plugin, que um dos arquivos especificados foram alterados, (aqui, somente usamos os arquivos que configuramos para o JSHint checar), são executadas as tarefas que você especificou, na ordem em que são dadas.
+This can be run on the command line with `grunt watch`. When it detects any of the files specified have changed (here, I just use the same files I told JSHint to check), it will run the tasks you specify, in the order they appear.
 
-Finalmente, temos que carregar no Grunt os plugins que vamos usar. Todos estes devem estar devidamente instalados através do npm.
+Finally, we have to load in the Grunt plugins we need. These should have all been installed through npm.
 
 ```javascript
 grunt.loadNpmTasks('grunt-contrib-uglify');
@@ -121,18 +125,18 @@ grunt.loadNpmTasks('grunt-contrib-watch');
 grunt.loadNpmTasks('grunt-contrib-concat');
 ```
 
-E finalmente configuramos algumas tarefas. O mais importante é a tarefa "default":
+And finally set up some tasks. Most important is the default task:
 
 
 ```javascript
-// isso deve ser executado com o comando 'grunt test'
+// this would be run by typing "grunt test" on the command line
 grunt.registerTask('test', ['jshint', 'qunit']);
 
-// a tarefa 'default' é executada quando você usa o comando 'grunt'
+// the default task can be run just by typing "grunt" on the command line
 grunt.registerTask('default', ['jshint', 'qunit', 'concat', 'uglify']);
 ```
 
-E finalmente, aqui está nosso arquivo `Gruntfile.js`:
+And here's the finished `Gruntfile.js`:
 
 ```javascript
 module.exports = function(grunt) {
@@ -164,7 +168,7 @@ module.exports = function(grunt) {
     jshint: {
       files: ['Gruntfile.js', 'src/**/*.js', 'test/**/*.js'],
       options: {
-        // opções que substituirão as opções padrão 
+        // options here to override JSHint defaults
         globals: {
           jQuery: true,
           console: true,
@@ -191,4 +195,3 @@ module.exports = function(grunt) {
 
 };
 ```
-
