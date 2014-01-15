@@ -1,6 +1,6 @@
-# Grunt 
+# Grunt
 
-Este repositório contém traduções para a documentação do Grunt.
+Documentação do Grunt traduzida para pt-BR
 
 1. [Home](Home.md)
 2. Documentation
